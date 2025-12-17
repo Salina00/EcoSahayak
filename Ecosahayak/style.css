@@ -1,0 +1,144 @@
+/* --- GLOBAL VARIABLES & RESET --- */
+:root {
+    --primary-color: #28a745;
+    /* Green */
+    --danger-color: #dc3545;
+    /* Red */
+    --dark-bg: #343a40;
+    --light-bg: #f8f9fa;
+    --text-color: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    padding: 20px;
+    max-width: 600px;
+    /* Mobile width limit */
+    margin: 0 auto;
+    /* Center on desktop */
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+/* --- CARDS & CONTAINERS --- */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#map {
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    z-index: 1;
+    /* Ensure map stays below popups */
+}
+
+/* --- BUTTONS --- */
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+    margin-top: 10px;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+#markBtn {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+}
+
+#setSiteBtn,
+#resetSiteBtn {
+    width: auto;
+    display: inline-block;
+    margin: 5px;
+}
+
+/* --- STATUS TEXT --- */
+#status {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background: #e9ecef;
+}
+
+/* --- LISTS (HISTORY) --- */
+h2 {
+    font-size: 20px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    background: white;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+li:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+li:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom: none;
+}
+
+/* --- ADMIN PANEL STYLE --- */
+.admin-panel {
+    background: #fff3cd;
+    /* Yellow tint */
+    border: 1px solid #ffeeba;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 400px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}

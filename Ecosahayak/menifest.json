@@ -1,14 +1,20 @@
 {
-    "name": "EcoSahayak",
+    "name": "EcoSahayak Workforce",
     "short_name": "EcoSahayak",
     "start_url": "./index.html",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#000000",
+    "background_color": "#f4f7f6",
+    "theme_color": "#28a745",
+    "orientation": "portrait",
     "icons": [
         {
-            "src": "https://via.placeholder.com/192",
+            "src": "https://cdn-icons-png.flaticon.com/512/2910/2910756.png",
             "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/2910/2910756.png",
+            "sizes": "512x512",
             "type": "image/png"
         }
     ]

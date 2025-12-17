@@ -5,15 +5,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSahayak</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
+
+    <body>
+        <div id="loginSection" class="login-container">
+            <div class="card login-card">
+                <h1>EcoSahayak</h1>
+                <p>Workforce Management System</p>
+                <br>
+                <input type="text" id="workerId" placeholder="Enter Worker ID (e.g., W-101)">
+                <input type="password" id="password" placeholder="Password (Any)">
+                <button id="loginBtn">Login</button>
+                <p id="loginError" style="color: red; font-size: 12px; margin-top: 10px;"></p>
+            </div>
+        </div>
+
+        <div id="dashboardSection" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 id="welcomeText">Welcome</h2>
+                <button id="logoutBtn"
+                    style="width: auto; padding: 8px 15px; font-size: 12px; background: #6c757d; margin: 0;">Logout</button>
+            </div>
+
+            <div class="admin-panel">
+                <h3 style="margin: 0 0 10px 0;">⚙️ Admin Setup</h3>
+                <p style="font-size: 12px; margin-bottom: 5px;">Current Site: <span id="siteCoords">Default</span></p>
+                <button id="setSiteBtn">📍 Set HERE as Site</button>
+                <button id="resetSiteBtn">🔄 Reset</button>
+            </div>
+
+            <div id="map" style="height: 350px; width: 100%; margin-bottom: 20px; border: 2px solid #333;"></div>
+
+            <p id="status">Status: Ready</p>
+            <button id="markBtn">Mark Attendance</button>
+
+            <h2>Offline Records</h2>
+            <ul id="recordList"></ul>
+        </div>
+
+        <script src="app.js"></script>
+        <script>
+            // PWA Register
+            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+        </script>
+    </body>
     <h1>EcoSahayak</h1>
     <p id="status">Status: Ready</p>
+    <div style="background: #f8f9fa; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px dashed #333;">
+        <h3 style="margin: 0 0 10px 0;">⚙️ Admin Setup</h3>
+        <p style="font-size: 12px; margin-bottom: 5px;">Current Site: <span id="siteCoords">Default (New Delhi)</span>
+        </p>
+        <button id="setSiteBtn" style="background: #007bff; padding: 5px 10px; font-size: 12px;">
+            📍 Set HERE as Work Site
+        </button>
+        <button id="resetSiteBtn" style="background: #6c757d; padding: 5px 10px; font-size: 12px;">
+            🔄 Reset
+        </button>
+    </div>
+    <div id="map" style="height: 350px; width: 100%; margin-bottom: 20px; border: 2px solid #333;"></div>
 
-    <button id="markBtn">Mark Attendance</button>
+    <button id="markBtn" style="padding: 15px 30px; font-size: 18px;">Mark Attendance</button>
 
     <h2>Offline Records</h2>
     <ul id="recordList"></ul>
