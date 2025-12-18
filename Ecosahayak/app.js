@@ -68,6 +68,22 @@ document.getElementById('loginBtn').onclick = () => {
     }
 };
 
+// 3. RESET PASSWORD (Added this logic)
+document.getElementById('resetBtn').onclick = () => {
+    const id = document.getElementById('forgotWorkerId').value;
+    const newPass = document.getElementById('newPassword').value;
+
+    if (!id || !newPass) return alert("Please fill all fields");
+
+    if (localStorage.getItem('user_' + id)) {
+        localStorage.setItem('user_' + id, newPass);
+        alert("Password reset! Please login with new password.");
+        showView('login');
+    } else {
+        alert("User ID not found.");
+    }
+};
+
 
 // ================= MAP & GPS LOGIC =================
 function initMap() {
@@ -270,3 +286,52 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c * 1000; // Meters
 }
+
+// ================= UI INTERACTION =================
+document.querySelectorAll('.ui-btn').forEach(btn => {
+    btn.onclick = function() { alert("Button Clicked: " + this.innerText); }
+});
+
+function initTaskLogic() {
+    const checkboxes = document.querySelectorAll('.task-check');
+    const progressBar = document.getElementById('progressBar');
+    const percentText = document.getElementById('taskPercent');
+
+    function updateProgress() {
+        const total = checkboxes.length;
+        const checked = document.querySelectorAll('.task-check:checked').length;
+        
+        // Calculate percentage
+        const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
+        
+        // Update UI
+        progressBar.style.width = percent + '%';
+        percentText.innerText = percent + '%';
+        
+        // Change color when complete
+        if(percent === 100) {
+            progressBar.style.backgroundColor = '#059669'; // Dark Green
+            percentText.classList.add('completed');
+            percentText.innerText = "DONE";
+        } else {
+            progressBar.style.backgroundColor = '#10B981'; // Regular Green
+        }
+    }
+
+    // Add click listeners
+    checkboxes.forEach(box => {
+        box.addEventListener('change', updateProgress);
+    });
+
+    // Run once on load
+    updateProgress();
+}
+
+// Call this when dashboard loads
+const originalShowView = showView; // Capture your existing function
+showView = function(viewName) {
+    originalShowView(viewName); // Call original
+    if(viewName === 'dashboard') {
+        setTimeout(initTaskLogic, 100); // Initialize tasks
+    }
+};

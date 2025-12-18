@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EcoSahayak Workforce</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>EcoSahayak</title>
+    <meta name="theme-color" content="#064E3B">
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json" />
@@ -14,102 +14,183 @@
 
     <!-- App CSS -->
     <link rel="stylesheet" href="style.css" />
+
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-    <!-- ================= LOGIN SECTION ================= -->
-    <section id="loginSection" class="card">
+    <section id="loginSection" class="auth-wrapper">
+        <div class="auth-card">
+            <div class="logo-circle">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+            <h1>EcoSahayak</h1>
+            
+            <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="workerId" placeholder="Worker ID">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" placeholder="Password">
+            </div>
 
-        <h1 style="color:#28a745;">EcoSahayak</h1>
-        <p>Workforce Management System</p>
-
-        <input type="text" id="workerId" placeholder="Worker ID (e.g., W-101)" />
-        <input type="password" id="password" placeholder="Password" />
-
-        <button id="loginBtn">Login</button>
-
-        <p style="margin-top:10px;">
-            <a href="#" id="showRegister">New user? Register</a> |
-            <a href="#" id="showForgot">Forgot Password</a>
-        </p>
-
-        <p id="loginError" style="color:red; font-size:13px;"></p>
-
+            <button id="loginBtn" class="btn-primary full-width">Secure Login</button>
+            
+            <div class="auth-footer">
+                <a href="#" id="showRegister">Register Account</a>
+                <span class="dot-sep">•</span>
+                <a href="#" id="showForgot">Forgot Password</a>
+            </div>
+            <p id="loginError" class="error-text"></p>
+        </div>
     </section>
 
-    <!-- REGISTER -->
-    <section id="registerSection" class="card hidden">
-        <h2>Register</h2>
-
-        <input type="text" id="regWorkerId" placeholder="Worker ID" />
-        <input type="password" id="regPassword" placeholder="Password" />
-
-        <button id="registerBtn">Register</button>
-        <p><a href="#" id="backToLogin1">Back to Login</a></p>
+    <section id="registerSection" class="auth-wrapper hidden">
+        <div class="auth-card">
+            <h2>New Account</h2>
+            <br>
+            <div class="input-group">
+                <i class="fa-solid fa-id-card"></i>
+                <input type="text" id="regWorkerId" placeholder="Create Worker ID" />
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" id="regPassword" placeholder="Create Password" />
+            </div>
+            <button id="registerBtn" class="btn-primary full-width">Register</button>
+            <button id="backToLogin1" class="btn-link">Back to Login</button>
+        </div>
     </section>
 
-    <!-- FORGOT PASSWORD -->
-    <section id="forgotSection" class="card hidden">
-        <h2>Reset Password</h2>
-
-        <input type="text" id="forgotWorkerId" placeholder="Worker ID" />
-        <input type="password" id="newPassword" placeholder="New Password" />
-
-        <button id="resetBtn">Reset Password</button>
-        <p><a href="#" id="backToLogin2">Back to Login</a></p>
+    <section id="forgotSection" class="auth-wrapper hidden">
+        <div class="auth-card">
+            <h2>Reset Password</h2>
+            <br>
+            <div class="input-group">
+                <i class="fa-solid fa-user-shield"></i>
+                <input type="text" id="forgotWorkerId" placeholder="Worker ID" />
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock-open"></i>
+                <input type="password" id="newPassword" placeholder="New Password" />
+            </div>
+            <button id="resetBtn" class="btn-primary full-width">Reset</button>
+            <button id="backToLogin2" class="btn-link">Back to Login</button>
+        </div>
     </section>
 
-
-
-    <!-- ================= DASHBOARD ================= -->
     <section id="dashboardSection" class="hidden">
+        
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <i class="fa-solid fa-leaf"></i> EcoSahayak
+            </div>
+            <div class="nav-right">
+                <div class="gps-badge">
+                    <span class="pulse-dot"></span> <span id="welcomeText">GPS Ready</span>
+                </div>
+                <button id="logoutBtn" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </nav>
 
-        <!-- TOP BAR -->
-        <div class="topbar">
-            <h2 id="welcomeText">Welcome</h2>
-            <button id="logoutBtn">Logout</button>
-        </div>
+        <main class="main-grid">
+            
+            <div class="card hero-section">
+                <div class="card-header">
+                    <div class="icon-square green"><i class="fa-solid fa-camera"></i></div>
+                    <h3>Smart Check-in</h3>
+                    <span id="status" class="status-pill">Ready</span>
+                </div>
 
-        <!-- ================= ADMIN SETUP ================= -->
-        <div class="card admin-card">
-            <h3>⚙️ Admin Setup</h3>
-            <p>Current Site: <span id="siteCoords"></span></p>
+                <div class="hero-body">
+                    <div class="camera-wrapper">
+                        <video id="videoFeed" autoplay playsinline></video>
+                        <canvas id="canvas" style="display:none;"></canvas>
+                        <img id="photoPreview" style="display:none;" />
+                        <button id="openCameraBtn" class="cam-overlay-btn"><i class="fa-solid fa-camera"></i> Start</button>
+                        <button id="captureBtn" class="cam-overlay-btn" style="display:none;"><i class="fa-solid fa-circle"></i> Snap</button>
+                        <button id="retakeBtn" class="cam-overlay-btn" style="display:none;"><i class="fa-solid fa-rotate-left"></i> Redo</button>
+                    </div>
+                    <div id="map" class="map-wrapper"></div>
+                </div>
 
-            <button id="setSiteBtn">📍 Set HERE as Site</button>
-            <button id="resetSiteBtn">🔄 Reset</button>
-        </div>
+                <button id="markBtn" class="big-action-btn">
+                    <i class="fa-solid fa-fingerprint"></i> MARK ATTENDANCE
+                </button>
+            </div>
 
-        <!-- ================= MAP ================= -->
-        <div id="map" style="height:300px; border-radius:12px;"></div>
+            <div class="right-stack">
+                
+                <div class="card widget-card">
+                    <div class="card-header">
+                        <div class="icon-square mint"><i class="fa-solid fa-list-check"></i></div>
+                        <h3>Today's Tasks</h3>
+                        <span id="taskPercent" class="percent-text">0%</span>
+                    </div>
+                    
+                    <div class="progress-bg"><div id="progressBar" class="progress-fill" style="width: 0%"></div></div>
 
-        <!-- ================= CAMERA ================= -->
-        <div class="card">
-            <h3>📷 Identity Verification</h3>
+                    <div class="task-list">
+                        <label class="task-row">
+                            <input type="checkbox" class="task-check"> 
+                            <span>Morning Briefing</span>
+                        </label>
+                        <label class="task-row">
+                            <input type="checkbox" class="task-check"> 
+                            <span>Zone A Cleaning</span>
+                        </label>
+                        <label class="task-row">
+                            <input type="checkbox" class="task-check"> 
+                            <span>Submit Report</span>
+                        </label>
+                    </div>
+                </div>
 
-            <video id="videoFeed" autoplay playsinline style="display:none;"></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <img id="photoPreview" style="display:none; width:100%; border-radius:10px;" />
+                <div class="card widget-card">
+                    <div class="card-header">
+                        <div class="icon-square mint"><i class="fa-solid fa-recycle"></i></div>
+                        <h3>Waste Log</h3>
+                    </div>
+                    <div class="input-flex">
+                        <input type="number" placeholder="Weight (kg)" class="modern-input">
+                        <button class="icon-btn-square"><i class="fa-solid fa-camera"></i></button>
+                    </div>
+                    <button class="btn-primary full-width mt-2">Save Entry</button>
+                </div>
 
-            <button id="openCameraBtn">Open Camera</button>
-            <button id="captureBtn" style="display:none;">Capture</button>
-            <button id="retakeBtn" style="display:none;">Retake</button>
-        </div>
+                <div class="card widget-card">
+                    <div class="card-header">
+                        <div class="icon-square mint"><i class="fa-solid fa-map-location-dot"></i></div>
+                        <h3>Site Setup</h3>
+                    </div>
+                    <p class="small-label">Current Location: <span id="siteCoords" class="bold-text">Not Set</span></p>
+                    <div class="btn-row">
+                        <button id="setSiteBtn" class="btn-small">Set Here</button>
+                        <button id="resetSiteBtn" class="btn-small outline">Reset</button>
+                    </div>
+                </div>
 
-        <!-- ================= ATTENDANCE ================= -->
-        <div class="card">
-            <h3>🕒 Attendance</h3>
-            <button id="markBtn">Mark Attendance</button>
-            <p id="status"></p>
-        </div>
+                <div class="action-row">
+                    <button class="action-tile sos">
+                        <i class="fa-solid fa-bell"></i>
+                        SOS Alert
+                    </button>
+                    <button class="action-tile report">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Report Issue
+                    </button>
+                </div>
 
+            </div>
+        </main>
     </section>
 
-
-    <!-- ================= SCRIPTS ================= -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="app.js"></script>
 
 </body>
-
 </html>
