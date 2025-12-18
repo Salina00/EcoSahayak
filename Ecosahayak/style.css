@@ -1,144 +1,107 @@
-/* --- GLOBAL VARIABLES & RESET --- */
-:root {
-    --primary-color: #28a745;
-    /* Green */
-    --danger-color: #dc3545;
-    /* Red */
-    --dark-bg: #343a40;
-    --light-bg: #f8f9fa;
-    --text-color: #333;
-}
-
+/* style.css */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--light-bg);
-    color: var(--text-color);
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     padding: 20px;
-    max-width: 600px;
-    /* Mobile width limit */
-    margin: 0 auto;
-    /* Center on desktop */
 }
 
-h1 {
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-    font-size: 28px;
+/* --- Utilities --- */
+.hidden {
+    display: none !important;
 }
 
-/* --- CARDS & CONTAINERS --- */
 .card {
     background: white;
-    padding: 20px;
-    border-radius: 15px;
+    padding: 25px;
+    border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
     margin-bottom: 20px;
 }
 
-#map {
-    border-radius: 12px;
-    border: 2px solid #ddd;
-    z-index: 1;
-    /* Ensure map stays below popups */
+/* --- Inputs & Buttons --- */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
 }
 
-/* --- BUTTONS --- */
 button {
     width: 100%;
-    padding: 15px;
+    padding: 12px;
     border: none;
     border-radius: 8px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: transform 0.1s, opacity 0.2s;
     margin-top: 10px;
+    transition: 0.2s;
 }
 
-button:active {
-    transform: scale(0.98);
-}
-
-#markBtn {
-    background-color: var(--primary-color);
+/* Primary Button (Green) */
+button {
+    background-color: #28a745;
     color: white;
-    font-size: 18px;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
 }
 
-#setSiteBtn,
-#resetSiteBtn {
-    width: auto;
-    display: inline-block;
-    margin: 5px;
+button:hover {
+    background-color: #218838;
 }
 
-/* --- STATUS TEXT --- */
-#status {
-    text-align: center;
-    font-weight: bold;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    background: #e9ecef;
+/* Secondary Button (Gray/Reset) */
+#resetSiteBtn,
+#retakeBtn,
+#logoutBtn {
+    background-color: #6c757d;
 }
 
-/* --- LISTS (HISTORY) --- */
-h2 {
-    font-size: 20px;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-ul {
-    list-style: none;
-}
-
-li {
-    background: white;
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
+/* --- Dashboard Specifics --- */
+.topbar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 400px;
 }
 
-li:first-child {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+.admin-card {
+    border: 2px dashed #28a745;
+    background-color: #e9f7ef;
 }
 
-li:last-child {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom: none;
-}
-
-/* --- ADMIN PANEL STYLE --- */
-.admin-panel {
-    background: #fff3cd;
-    /* Yellow tint */
-    border: 1px solid #ffeeba;
-    padding: 15px;
-    border-radius: 10px;
+#map {
+    width: 100%;
+    max-width: 400px;
     margin-bottom: 20px;
-    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* --- RESPONSIVE ADJUSTMENTS --- */
-@media (max-width: 400px) {
-    h1 {
-        font-size: 24px;
-    }
+#videoFeed,
+#photoPreview {
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    background: #000;
+}
 
-    button {
-        font-size: 14px;
-    }
+a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
 }
