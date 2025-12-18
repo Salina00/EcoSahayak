@@ -2,89 +2,114 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoSahayak</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoSahayak Workforce</title>
 
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <!-- App CSS -->
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-    <body>
-        <div id="loginSection" class="login-container">
-            <div class="card login-card">
-                <h1>EcoSahayak</h1>
-                <p>Workforce Management System</p>
-                <br>
-                <input type="text" id="workerId" placeholder="Enter Worker ID (e.g., W-101)">
-                <input type="password" id="password" placeholder="Password (Any)">
-                <button id="loginBtn">Login</button>
-                <p id="loginError" style="color: red; font-size: 12px; margin-top: 10px;"></p>
-            </div>
-        </div>
+    <!-- ================= LOGIN SECTION ================= -->
+    <section id="loginSection" class="card">
 
-        <div id="dashboardSection" class="hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 id="welcomeText">Welcome</h2>
-                <button id="logoutBtn"
-                    style="width: auto; padding: 8px 15px; font-size: 12px; background: #6c757d; margin: 0;">Logout</button>
-            </div>
+        <h1 style="color:#28a745;">EcoSahayak</h1>
+        <p>Workforce Management System</p>
 
-            <div class="admin-panel">
-                <h3 style="margin: 0 0 10px 0;">⚙️ Admin Setup</h3>
-                <p style="font-size: 12px; margin-bottom: 5px;">Current Site: <span id="siteCoords">Default</span></p>
-                <button id="setSiteBtn">📍 Set HERE as Site</button>
-                <button id="resetSiteBtn">🔄 Reset</button>
-            </div>
+        <input type="text" id="workerId" placeholder="Worker ID (e.g., W-101)" />
+        <input type="password" id="password" placeholder="Password" />
 
-            <div id="map" style="height: 350px; width: 100%; margin-bottom: 20px; border: 2px solid #333;"></div>
+        <button id="loginBtn">Login</button>
 
-            <p id="status">Status: Ready</p>
-            <button id="markBtn">Mark Attendance</button>
-
-            <h2>Offline Records</h2>
-            <ul id="recordList"></ul>
-        </div>
-
-        <script src="app.js"></script>
-        <script>
-            // PWA Register
-            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-        </script>
-    </body>
-    <h1>EcoSahayak</h1>
-    <p id="status">Status: Ready</p>
-    <div style="background: #f8f9fa; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px dashed #333;">
-        <h3 style="margin: 0 0 10px 0;">⚙️ Admin Setup</h3>
-        <p style="font-size: 12px; margin-bottom: 5px;">Current Site: <span id="siteCoords">Default (New Delhi)</span>
+        <p style="margin-top:10px;">
+            <a href="#" id="showRegister">New user? Register</a> |
+            <a href="#" id="showForgot">Forgot Password</a>
         </p>
-        <button id="setSiteBtn" style="background: #007bff; padding: 5px 10px; font-size: 12px;">
-            📍 Set HERE as Work Site
-        </button>
-        <button id="resetSiteBtn" style="background: #6c757d; padding: 5px 10px; font-size: 12px;">
-            🔄 Reset
-        </button>
-    </div>
-    <div id="map" style="height: 350px; width: 100%; margin-bottom: 20px; border: 2px solid #333;"></div>
 
-    <button id="markBtn" style="padding: 15px 30px; font-size: 18px;">Mark Attendance</button>
+        <p id="loginError" style="color:red; font-size:13px;"></p>
 
-    <h2>Offline Records</h2>
-    <ul id="recordList"></ul>
+    </section>
 
+    <!-- REGISTER -->
+    <section id="registerSection" class="card hidden">
+        <h2>Register</h2>
+
+        <input type="text" id="regWorkerId" placeholder="Worker ID" />
+        <input type="password" id="regPassword" placeholder="Password" />
+
+        <button id="registerBtn">Register</button>
+        <p><a href="#" id="backToLogin1">Back to Login</a></p>
+    </section>
+
+    <!-- FORGOT PASSWORD -->
+    <section id="forgotSection" class="card hidden">
+        <h2>Reset Password</h2>
+
+        <input type="text" id="forgotWorkerId" placeholder="Worker ID" />
+        <input type="password" id="newPassword" placeholder="New Password" />
+
+        <button id="resetBtn">Reset Password</button>
+        <p><a href="#" id="backToLogin2">Back to Login</a></p>
+    </section>
+
+
+
+    <!-- ================= DASHBOARD ================= -->
+    <section id="dashboardSection" class="hidden">
+
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <h2 id="welcomeText">Welcome</h2>
+            <button id="logoutBtn">Logout</button>
+        </div>
+
+        <!-- ================= ADMIN SETUP ================= -->
+        <div class="card admin-card">
+            <h3>⚙️ Admin Setup</h3>
+            <p>Current Site: <span id="siteCoords"></span></p>
+
+            <button id="setSiteBtn">📍 Set HERE as Site</button>
+            <button id="resetSiteBtn">🔄 Reset</button>
+        </div>
+
+        <!-- ================= MAP ================= -->
+        <div id="map" style="height:300px; border-radius:12px;"></div>
+
+        <!-- ================= CAMERA ================= -->
+        <div class="card">
+            <h3>📷 Identity Verification</h3>
+
+            <video id="videoFeed" autoplay playsinline style="display:none;"></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="photoPreview" style="display:none; width:100%; border-radius:10px;" />
+
+            <button id="openCameraBtn">Open Camera</button>
+            <button id="captureBtn" style="display:none;">Capture</button>
+            <button id="retakeBtn" style="display:none;">Retake</button>
+        </div>
+
+        <!-- ================= ATTENDANCE ================= -->
+        <div class="card">
+            <h3>🕒 Attendance</h3>
+            <button id="markBtn">Mark Attendance</button>
+            <p id="status"></p>
+        </div>
+
+    </section>
+
+
+    <!-- ================= SCRIPTS ================= -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="app.js"></script>
-    <script>
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker Registered'));
-        }
-    </script>
+
 </body>
 
 </html>
