@@ -1,4 +1,3 @@
-//const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUP8Is1TzlR-HBoHAgCwPfsB7WCecTP0HRZjG473ygKlTgP3lBfOM5Qt0akdskP6LDiQ/exec";
 // ================= GLOBAL VARIABLES =================
 let map, userMarker, siteCircle;
 let userLat, userLng;
@@ -30,11 +29,9 @@ function showView(viewName) {
     // --- SETUP FOR ADMIN ---
     if (viewName === 'admin') {
         setTimeout(() => {
-            // 1. Load Data
             loadAdminChart();
             fetchReports();
-
-            // 2. Start GPS & Map (This was missing!)
+            
             if (map) map.invalidateSize();
             initMap();
             startLocationTracking();
@@ -45,11 +42,11 @@ function showView(viewName) {
     // --- SETUP FOR WORKER ---
     if (viewName === 'dashboard') {
         setTimeout(() => {
-            // Start GPS & Map
             if (map) map.invalidateSize();
             initMap();
             startLocationTracking();
             updateSiteUI();
+            initTaskLogic(); // <--- ADDED THIS (From Main Branch Logic)
         }, 300);
     }
 }
@@ -94,6 +91,7 @@ document.getElementById('loginBtn').onclick = () => {
     }
 };
 
+// 4. REGISTER LOGIC (From Feature Branch)
 document.getElementById('registerBtn').onclick = () => {
     const id = document.getElementById('regWorkerId').value;
     const pass = document.getElementById('regPassword').value;
@@ -104,20 +102,54 @@ document.getElementById('registerBtn').onclick = () => {
     }
 };
 
+// 5. RESET PASSWORD LOGIC (From Main Branch)
+document.getElementById('resetBtn').onclick = () => {
+    const id = document.getElementById('forgotWorkerId').value;
+    const newPass = document.getElementById('newPassword').value;
+
+    if (!id || !newPass) return alert("Please fill all fields");
+
+    if (localStorage.getItem('user_' + id)) {
+        localStorage.setItem('user_' + id, newPass);
+        alert("Password reset! Please login with new password.");
+        showView('login');
+    } else {
+        alert("User ID not found.");
+    }
+};
+
+
+// ================= MAP & GPS LOGIC =================
+function initMap() {
+    if (map) return;
+
+    // Default view (India), will update once GPS is found
+    map = L.map('map').setView([20.5937, 78.9629], 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Draw Site Circle if it exists
+    if (siteLat && siteLng) {
+        drawSiteCircle(siteLat, siteLng);
+    }
+}
+
 
 // ================= ADMIN: CHARTS & REPORTS =================
 function loadAdminChart() {
     const ctx = document.getElementById('attendanceChart');
     if (!ctx) return;
 
-    if (adminChart) adminChart.destroy(); // Prevent glitches
+    if (adminChart) adminChart.destroy();
 
     adminChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: ['Present', 'Late', 'Absent'],
             datasets: [{
-                data: [15, 3, 2], // Demo Data for Hackathon
+                data: [15, 3, 2],
                 backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
                 borderWidth: 0,
                 hoverOffset: 4
@@ -159,7 +191,7 @@ function fetchReports() {
             });
         })
         .catch(err => {
-            console.error("Full Error Details:", err); // Prints to F12 Console
+            console.error("Full Error Details:", err);
             list.innerHTML = `<li style="text-align:center; color:red;">❌ Sync Failed: ${err.message}</li>`;
         });
 }
@@ -180,7 +212,6 @@ function fetchActiveWorkers() {
                 list.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">No active workers found.</li>';
                 return;
             }
-            // Populate List
             data.forEach(item => {
                 let li = document.createElement('li');
                 li.style.cssText = "display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; align-items:center;";
@@ -201,7 +232,7 @@ function fetchActiveWorkers() {
 }
 
 
-// ================= WORKER: LEAVE REQUESTS (NEW) =================
+// ================= WORKER: LEAVE REQUESTS =================
 function toggleLeave() {
     const form = document.getElementById('leaveForm');
     const btn = document.getElementById('toggleLeaveBtn');
@@ -285,7 +316,6 @@ capBtn.onclick = () => {
     capBtn.style.display = 'none';
     retakeBtn.style.display = 'inline-flex';
 
-    // Stop camera to save battery
     video.srcObject.getTracks().forEach(t => t.stop());
 };
 
@@ -306,7 +336,7 @@ function handleStartDay() {
     // Geofence Check
     const dist = calculateDistance(siteLat, siteLng, userLat, userLng);
     if (siteLat && dist > SITE_RADIUS_METERS) {
-        alert(`❌ Too Far! You are ${dist}m away from site.`);
+        alert(`❌ Too Far! You are ${Math.round(dist)}m away from site.`);
         return;
     }
 
@@ -318,7 +348,7 @@ function handleStartDay() {
         workerId: workerId,
         lat: userLat,
         lng: userLng,
-        distance: dist,
+        distance: Math.round(dist),
         photo: photoPreview.src
     });
 }
@@ -363,7 +393,6 @@ function triggerReport() {
             issue: issue
         });
 
-        // Restore button after delay
         setTimeout(() => { btn.innerHTML = originalText; }, 2000);
     }
 }
@@ -376,39 +405,23 @@ function sendData(data) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     }).then(() => {
-        // --- CHECKIN ---
         if (data.action === "checkin") {
             statusTxt.innerText = "Active";
             statusTxt.style.background = "#bbf7d0";
             alert("✅ Attendance Marked! Work Started.");
-        }
-        // --- CHECKOUT ---
-        else if (data.action === "checkout") {
+        } else if (data.action === "checkout") {
             statusTxt.innerText = "Done";
             statusTxt.style.background = "#e5e7eb";
             document.getElementById('checkoutForm').style.display = 'none';
             alert("✅ Day Ended Successfully!");
-        }
-        // --- REPORT ---
-        else if (data.action === "report") {
+        } else if (data.action === "report") {
             alert("✅ Report Sent to Admin Dashboard!");
-        }
-        // --- LEAVE ---
-        else if (data.action === "applyLeave") {
-            // Handled in submitLeave specific function
         }
     }).catch(err => alert("Error: " + err));
 }
 
 
 // ================= MAP UTILS =================
-function initMap() {
-    if (map) return;
-    map = L.map('map').setView([20.5937, 78.9629], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-    if (siteLat && siteLng) drawSiteCircle(siteLat, siteLng);
-}
-
 function startLocationTracking() {
     if (!navigator.geolocation) return;
     navigator.geolocation.watchPosition(pos => {
@@ -458,19 +471,50 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     var dLon = (lon2 - lon1) * (Math.PI / 180);
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return (R * c * 1000).toFixed(0);
+    return R * c * 1000; // Returns Meters
 }
 
 
-// ================= TASK PROGRESS =================
-document.querySelectorAll('.task-check').forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-        const total = document.querySelectorAll('.task-check').length;
-        const checked = document.querySelectorAll('.task-check:checked').length;
-        const percent = Math.round((checked / total) * 100);
-
-        // Visuals
-        const bar = document.getElementById('progressBar'); // Make sure to add bar to HTML if you want it
-        if (percent === 100) alert("🎉 Tasks Completed!");
-    });
+// ================= TASK PROGRESS & UI INTERACTION =================
+document.querySelectorAll('.ui-btn').forEach(btn => {
+    btn.onclick = function() { alert("Button Clicked: " + this.innerText); }
 });
+
+function initTaskLogic() {
+    const checkboxes = document.querySelectorAll('.task-check');
+    const progressBar = document.getElementById('progressBar');
+    const percentText = document.getElementById('taskPercent');
+
+    if(!progressBar) return;
+
+    function updateProgress() {
+        const total = checkboxes.length;
+        const checked = document.querySelectorAll('.task-check:checked').length;
+        
+        // Calculate percentage
+        const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
+        
+        // Update UI
+        progressBar.style.width = percent + '%';
+        if(percentText) percentText.innerText = percent + '%';
+        
+        // Change color when complete
+        if(percent === 100) {
+            progressBar.style.backgroundColor = '#059669'; // Dark Green
+            if(percentText) {
+                percentText.classList.add('completed');
+                percentText.innerText = "DONE";
+            }
+        } else {
+            progressBar.style.backgroundColor = '#10B981'; // Regular Green
+        }
+    }
+
+    // Add click listeners
+    checkboxes.forEach(box => {
+        box.addEventListener('change', updateProgress);
+    });
+
+    // Run once on load
+    updateProgress();
+}
