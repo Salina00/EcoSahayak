@@ -1,14 +1,20 @@
 const CACHE_NAME = "ecosahayak-v3";
 
 const ASSETS_TO_CACHE = [
-    "/index.html",
-    "/style.css",
-    "/app.js",
-    "/manifest.json",
+    "./",
+    "./index.html",
+    "./style.css",
+    "./app.js",
+    "./manifest.json",
+    // Maps
     "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
     "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png"
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    // Icons (NEW)
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+    // Charts (NEW)
+    "https://cdn.jsdelivr.net/npm/chart.js"
 ];
 
 // INSTALL
