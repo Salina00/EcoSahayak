@@ -49,6 +49,8 @@ function showView(viewName) {
     if (views[viewName]) views[viewName].classList.remove('hidden');
 
     if (viewName === 'dashboard') {
+        const user = localStorage.getItem('currentUser');
+        if (user) document.getElementById('welcomeText').innerText = `Hello, ${user}`;
         setTimeout(() => {
             initMap();
             startLocationTracking();
@@ -82,10 +84,21 @@ document.getElementById('backToLogin1').onclick = () => showView('login');
 document.getElementById('backToLogin2').onclick = () => showView('login');
 
 function handleLogout() {
+    // 1. Clear Local Storage
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentRole');
-    localStorage.removeItem('isShiftStarted');
-    location.reload();
+    localStorage.removeItem('siteLat');
+    localStorage.removeItem('siteLng');
+
+    // 2. Clear Session Storage (just in case)
+    sessionStorage.clear();
+
+    // 3. Unregister Service Workers (Optional: nuclear option if caching is really bad)
+    // navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    //     for(let registration of registrations) { registration.unregister(); }
+    // });
+
+    // 4. Force Reload from Server (ignores cache)
+    window.location.reload(true);
 }
 
 // --- LOGIN LOGIC ---
@@ -630,4 +643,44 @@ function resolveIssue(id) {
         localStorage.setItem('adminReports', JSON.stringify(reports));
         loadAdminReports(); // Refresh list
     }
+}
+// === IOT SENSOR LOGIC: FALL DETECTION ===
+// We use the 'devicemotion' API to access the phone's hardware accelerometer
+let lastX, lastY, lastZ;
+let moveCounter = 0;
+
+if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', function (event) {
+        if (!event.accelerationIncludingGravity) return;
+
+        const { x, y, z } = event.accelerationIncludingGravity;
+
+        // Calculate G-Force (Total Acceleration)
+        // Normal gravity is ~9.8 m/s². A fall creates a spike > 20-30.
+        const totalAccel = Math.sqrt(x * x + y * y + z * z);
+
+        // THRESHOLD: If G-Force > 25 (Approx 2.5G), it might be a fall
+        if (totalAccel > 25) {
+            detectFall();
+        }
+    });
+} else {
+    console.log("IoT Sensors not available on this device.");
+}
+
+function detectFall() {
+    // Prevent multiple triggers
+    if (window.fallTimeout) return;
+
+    // Vibrate the phone (Haptic Feedback)
+    if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+
+    // Show Alert
+    window.fallTimeout = setTimeout(() => {
+        const confirmSafety = confirm("⚠️ FALL DETECTED!\n\nAre you okay?\nClick OK to cancel SOS.");
+        if (!confirmSafety) {
+            triggerSOS(); // Auto-trigger SOS if they don't cancel
+        }
+        window.fallTimeout = null;
+    }, 500); // Wait 0.5s to filter out accidental shakes
 }

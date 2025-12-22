@@ -23,20 +23,16 @@
             <h2>Welcome Back</h2>
             <p>Smart Workforce Management</p>
 
-            <input type="text" id="workerId" placeholder="User ID" class="modern-input">
-            <input type="password" id="password" placeholder="Password" class="modern-input">
+            <input type="text" id="workerId" placeholder="👤 User ID" class="modern-input">
+            <input type="password" id="password" placeholder="🔒 Password" class="modern-input">
 
-            <button id="loginBtn" class="btn-primary full-width">Login</button>
+            <button id="loginBtn" class="btn-primary full-width">
+                <i class="fa-solid fa-right-to-bracket"></i> Login
+            </button>
             <p id="loginError" class="error-text"></p>
 
             <div class="login-links">
-                <span id="showRegister">Register</span> | <span id="showForgot">Forgot Password?</span>
-            </div>
-            <div style="margin-top: 20px; font-size: 0.8rem; color: #666;">
-                <p><strong>Demo Credentials:</strong><br>
-                    Admin: admin / admin123<br>
-                    Supervisor: sup / sup123<br>
-                    Worker: 101 / (any)</p>
+                <span id="showRegister">📝 Register</span> | <span id="showForgot">❓ Forgot Password?</span>
             </div>
         </div>
     </section>
@@ -60,9 +56,8 @@
             <div class="card map-card">
                 <h3><i class="fa-solid fa-map-location-dot"></i> Your Location</h3>
                 <div id="map"></div>
-                <div class="map-info">GPS Accuracy: <span id="gpsAccuracy">Waiting...</span></div>
-                <div class="map-info" style="font-size: 0.8rem; color:#666; margin-top:5px;">You must be inside the
-                    Green Circle to check in.</div>
+                <div class="map-info">📍 GPS Accuracy: <span id="gpsAccuracy">Waiting...</span></div>
+                <div class="map-info map-warning">⚠ You must be inside the Green Circle to check in.</div>
             </div>
 
             <div class="right-stack">
@@ -75,15 +70,21 @@
                         <img id="photoPreview" src="" alt="Selfie" style="display:none;">
                     </div>
                     <div class="cam-controls">
-                        <button id="openCameraBtn" class="btn-secondary">Open</button>
-                        <button id="captureBtn" class="btn-primary hidden">Snap</button>
-                        <button id="retakeBtn" class="btn-secondary hidden">Retake</button>
+                        <button id="openCameraBtn" class="btn-secondary">
+                            <i class="fa-solid fa-video"></i> Open
+                        </button>
+                        <button id="captureBtn" class="btn-primary hidden">
+                            <i class="fa-solid fa-camera"></i> Snap
+                        </button>
+                        <button id="retakeBtn" class="btn-secondary hidden">
+                            <i class="fa-solid fa-rotate-left"></i> Retake
+                        </button>
                     </div>
                 </div>
 
                 <div class="card widget-card">
                     <div class="card-header">
-                        <h3>Today's Tasks</h3>
+                        <h3><i class="fa-solid fa-clipboard-list"></i> Today's Tasks</h3>
                         <span class="percent-text" id="taskPercent">0%</span>
                     </div>
                     <div class="progress-track">
@@ -91,76 +92,73 @@
                     </div>
                     <div class="task-list" id="workerTaskList">
                         <p style="color:#999; text-align:center; font-size:0.9rem; padding:10px;">
-                            No tasks assigned yet.
+                            ✅ No tasks assigned yet.
                         </p>
                     </div>
                 </div>
 
-                <div class="card widget-card">
+                <div class="card widget-card activity-card">
                     <div class="card-header">
-                        <div class="icon-square" style="background: #dcfce7; color: #166534;">
+                        <div class="icon-square green-square">
                             <i class="fa-solid fa-clipboard-check"></i>
                         </div>
                         <h3>Log Field Activity</h3>
                     </div>
                     <div style="margin-top:15px;">
                         <select id="reportCategory" class="modern-input">
-                            <option value="Waste Collection">Waste Collection 🗑️</option>
-                            <option value="Tree Plantation">Tree Plantation 🌱</option>
-                            <option value="Awareness Drive">Awareness Drive 📢</option>
-                            <option value="Site Issue">Site Issue ⚠️</option>
+                            <option value="Waste Collection">🗑 Waste Collection</option>
+                            <option value="Tree Plantation">🌱 Tree Plantation</option>
+                            <option value="Awareness Drive">📢 Awareness Drive</option>
+                            <option value="Site Issue">⚠ Site Issue</option>
                         </select>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                            <input type="number" id="reportQty" placeholder="Qty (kg/count)" class="modern-input">
-                            <input type="text" id="reportUnit" placeholder="Unit (kg, bags)" class="modern-input">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+                            <input type="number" id="reportQty" placeholder="📊 Qty (kg/count)" class="modern-input">
+                            <input type="text" id="reportUnit" placeholder="📦 Unit (kg, bags)" class="modern-input">
                         </div>
-                        <textarea id="reportNotes" placeholder="Details (e.g., Segregated plastic from Zone A)"
-                            class="modern-input" rows="2"></textarea>
-                        <button onclick="submitFieldReport()" class="btn-primary full-width"
-                            style="background: #166534;">
+                        <textarea id="reportNotes" placeholder="📝 Details (e.g., Segregated plastic from Zone A)"
+                            class="modern-input" rows="2" style="margin-top:10px;"></textarea>
+                        <button onclick="submitFieldReport()" class="btn-primary full-width btn-green">
                             <i class="fa-solid fa-paper-plane"></i> Submit Log
                         </button>
                     </div>
                 </div>
 
-                <div class="card widget-card">
+                <div class="card widget-card leave-card">
                     <h3><i class="fa-solid fa-calendar-xmark"></i> Apply for Leave</h3>
                     <div id="workerLeaveStatus"
                         style="margin-bottom:10px; font-size:0.9rem; padding:8px; border-radius:4px; display:none;">
                     </div>
                     <div id="leaveFormBlock">
                         <select id="leaveType" class="modern-input">
-                            <option value="Sick Leave">Sick Leave 🤒</option>
-                            <option value="Casual Leave">Casual Leave 🏠</option>
-                            <option value="Emergency">Emergency 🚨</option>
+                            <option value="Sick Leave">🤒 Sick Leave</option>
+                            <option value="Casual Leave">🏠 Casual Leave</option>
+                            <option value="Emergency">🚨 Emergency</option>
                         </select>
-                        <textarea id="leaveReason" placeholder="Reason (e.g., Fever)" class="modern-input"
-                            rows="2"></textarea>
-                        <button onclick="submitLeave()" class="btn-primary full-width"
-                            style="background:#f59e0b; margin-top:5px;">
-                            Submit Request
+                        <textarea id="leaveReason" placeholder="✍ Reason (e.g., Fever)" class="modern-input" rows="2"
+                            style="margin-top:10px;"></textarea>
+                        <button onclick="submitLeave()" class="btn-primary full-width btn-amber">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Request
                         </button>
                     </div>
                 </div>
 
-                <div class="card widget-card" style="border-left: 5px solid #dc2626;">
+                <div class="card widget-card sos-card">
                     <div class="card-header">
-                        <div class="icon-square" style="background: #fee2e2; color: #dc2626;">
+                        <div class="icon-square red-square">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <h3>Report Issue / SOS</h3>
                     </div>
                     <div style="margin-top:10px;">
                         <select id="issueType" class="modern-input">
-                            <option value="Safety Hazard">⚠️ Safety Hazard</option>
-                            <option value="Equipment Failure">🛠️ Equipment Failure</option>
+                            <option value="Safety Hazard">⚠ Safety Hazard</option>
+                            <option value="Equipment Failure">🛠 Equipment Failure</option>
                             <option value="App Issue">📱 App/Tech Issue</option>
                         </select>
-                        <textarea id="issueDesc" placeholder="Describe the problem..." class="modern-input"
-                            rows="2"></textarea>
-                        <button onclick="submitAdminReport()" class="btn-primary full-width"
-                            style="background: #dc2626;">
-                            Send to Admin
+                        <textarea id="issueDesc" placeholder="📝 Describe the problem..." class="modern-input" rows="2"
+                            style="margin-top:10px;"></textarea>
+                        <button onclick="submitAdminReport()" class="btn-primary full-width btn-red">
+                            <i class="fa-solid fa-exclamation-circle"></i> Send to Admin
                         </button>
                     </div>
                 </div>
@@ -170,18 +168,17 @@
     </section>
 
     <section id="supervisorDashboardSection" class="hidden">
-        <nav class="top-nav" style="background: #ea580c; color: white;">
+        <nav class="top-nav supervisor-nav">
             <div class="nav-brand"><i class="fa-solid fa-users-viewfinder"></i> Supervisor</div>
-            <button onclick="handleLogout()" class="logout-btn" style="color: white;"><i
-                    class="fa-solid fa-right-from-bracket"></i></button>
+            <button onclick="handleLogout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
         </nav>
 
         <main class="main-grid">
-            <div class="card hero-section">
-                <h3>Live Muster Roll</h3>
+            <div class="card hero-section supervisor-hero">
+                <h3>👥 Live Muster Roll</h3>
                 <p style="color:#666; font-size:0.9rem;">Real-time active workers.</p>
                 <ul id="activeWorkerList" class="feed-list">
-                    <li>Loading...</li>
+                    <li>⏳ Loading...</li>
                 </ul>
                 <button onclick="fetchActiveWorkers()" class="btn-secondary full-width" style="margin-top:10px;">
                     <i class="fa-solid fa-rotate"></i> Refresh
@@ -190,21 +187,21 @@
 
             <div class="card widget-card">
                 <div class="card-header">
-                    <div class="icon-square" style="background: #f3e8ff; color: #7e22ce;">
+                    <div class="icon-square purple-square">
                         <i class="fa-solid fa-list-check"></i>
                     </div>
                     <h3>Assign Task</h3>
                 </div>
                 <div style="margin-top:10px;">
-                    <input type="text" id="newTaskDesc" placeholder="Task Name (e.g., Clean Zone B)"
+                    <input type="text" id="newTaskDesc" placeholder="📋 Task Name (e.g., Clean Zone B)"
                         class="modern-input">
-                    <select id="assignWorkerSelect" class="modern-input">
-                        <option value="">Select Worker...</option>
+                    <select id="assignWorkerSelect" class="modern-input" style="margin-top:10px;">
+                        <option value="">👤 Select Worker...</option>
                         <option value="101">Worker 101</option>
                         <option value="102">Worker 102</option>
                         <option value="105">Worker 105</option>
                     </select>
-                    <button onclick="assignTask()" class="btn-primary full-width" style="background:#7e22ce;">
+                    <button onclick="assignTask()" class="btn-primary full-width btn-purple">
                         <i class="fa-solid fa-plus"></i> Assign Task
                     </button>
                 </div>
@@ -212,13 +209,13 @@
 
             <div class="card widget-card">
                 <div class="card-header">
-                    <div class="icon-square" style="background: #dcfce7; color: #166534;">
+                    <div class="icon-square green-square">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
                     <h3>Live Field Reports</h3>
                 </div>
                 <ul id="opsFeedList" class="feed-list" style="margin-top:15px;">
-                    <li style="text-align:center; color:#999;">No reports today.</li>
+                    <li style="text-align:center; color:#999;">📊 No reports today.</li>
                 </ul>
                 <button onclick="loadOpsFeed()" class="btn-secondary full-width" style="margin-top:10px;">
                     <i class="fa-solid fa-rotate"></i> Refresh Feed
@@ -227,49 +224,52 @@
 
             <div class="card widget-card">
                 <div class="card-header">
-                    <div class="icon-square" style="background: #e0f2fe; color: #0284c7;">
+                    <div class="icon-square blue-square">
                         <i class="fa-solid fa-envelope-open-text"></i>
                     </div>
                     <h3>Leave Requests</h3>
                 </div>
                 <ul id="supervisorLeaveList" class="feed-list" style="margin-top:15px;">
-                    <li style="text-align:center; color:#999;">No pending requests</li>
+                    <li style="text-align:center; color:#999;">📋 No pending requests</li>
                 </ul>
             </div>
         </main>
     </section>
 
     <section id="adminDashboardSection" class="hidden">
-        <nav class="top-nav" style="background: #1f2937; color: white;">
+        <nav class="top-nav admin-nav">
             <div class="nav-brand"><i class="fa-solid fa-user-shield"></i> Admin Panel</div>
-            <button onclick="handleLogout()" class="logout-btn" style="color: white;"><i
-                    class="fa-solid fa-right-from-bracket"></i></button>
+            <button onclick="handleLogout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
         </nav>
 
         <main class="main-grid">
-            <div class="card">
-                <h3>📍 Set Project Geofence</h3>
-                <p>Current Site: <span id="adminSiteCoords" style="font-weight:bold;">Not Set</span></p>
+            <div class="card admin-geofence-card">
+                <h3><i class="fa-solid fa-location-dot"></i> Set Project Geofence</h3>
+                <p>📍 Current Site: <span id="adminSiteCoords" style="font-weight:bold;">Not Set</span></p>
                 <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button id="setSiteBtn" class="btn-primary">Set Current Loc</button>
-                    <button id="resetSiteBtn" class="btn-secondary">Clear</button>
+                    <button id="setSiteBtn" class="btn-primary">
+                        <i class="fa-solid fa-map-pin"></i> Set Current Loc
+                    </button>
+                    <button id="resetSiteBtn" class="btn-secondary">
+                        <i class="fa-solid fa-xmark"></i> Clear
+                    </button>
                 </div>
             </div>
 
-            <div class="card">
-                <h3>📊 Global Stats</h3>
+            <div class="card admin-stats-card">
+                <h3><i class="fa-solid fa-chart-column"></i> Global Stats</h3>
                 <div style="height: 200px;"><canvas id="attendanceChart"></canvas></div>
             </div>
 
             <div class="card widget-card">
                 <div class="card-header">
-                    <div class="icon-square" style="background: #fee2e2; color: #dc2626;">
+                    <div class="icon-square red-square">
                         <i class="fa-solid fa-bell"></i>
                     </div>
                     <h3>Incident Reports</h3>
                 </div>
                 <ul id="adminReportList" class="feed-list" style="margin-top:15px;">
-                    <li style="text-align:center; color:#999;">No active issues.</li>
+                    <li style="text-align:center; color:#999;">🔔 No active issues.</li>
                 </ul>
                 <button onclick="loadAdminReports()" class="btn-secondary full-width" style="margin-top:10px;">
                     <i class="fa-solid fa-rotate"></i> Refresh Reports
@@ -280,16 +280,29 @@
 
     <section id="registerSection" class="view-section hidden">
         <div class="login-card">
+            <div class="brand-logo"><i class="fa-solid fa-user-plus"></i></div>
             <h2>New Registration</h2>
-            <input type="text" placeholder="Create ID" class="modern-input">
-            <button class="btn-primary full-width">Register</button>
-            <button id="backToLogin1" class="btn-link">Back</button>
+            <input type="text" placeholder="👤 Create ID" class="modern-input">
+            <button class="btn-primary full-width">
+                <i class="fa-solid fa-check"></i> Register
+            </button>
+            <button id="backToLogin1" class="btn-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Login
+            </button>
         </div>
     </section>
+
     <section id="forgotSection" class="view-section hidden">
         <div class="login-card">
+            <div class="brand-logo"><i class="fa-solid fa-key"></i></div>
             <h2>Reset Password</h2>
-            <button id="backToLogin2" class="btn-link">Back</button>
+            <input type="email" placeholder="📧 Email Address" class="modern-input">
+            <button class="btn-primary full-width">
+                <i class="fa-solid fa-paper-plane"></i> Send Reset Link
+            </button>
+            <button id="backToLogin2" class="btn-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Login
+            </button>
         </div>
     </section>
 
