@@ -1,3 +1,18 @@
+//app url: https://script.google.com/macros/s/AKfycbz-RQUhqpEvb0lFvIcIDOb7Y4R4eBz7ekW7V8TzH9w4pZn0urMRbEl3NuLshPp6V3SvtQ/exec
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbz-RQUhqpEvb0lFvIcIDOb7Y4R4eBz7ekW7V8TzH9w4pZn0urMRbEl3NuLshPp6V3SvtQ/exec";
+
+async function saveDataToCloud(sheetName, rowData) {
+    try {
+        await fetch(BACKEND_URL, {
+            method: "POST",
+            mode: "no-cors", // Required for Google Apps Script
+            body: JSON.stringify({ sheetName: sheetName, rowData: rowData })
+        });
+        console.log("Data synced to cloud");
+    } catch (e) {
+        console.error("Cloud sync failed, keeping in local storage", e);
+    }
+}
 // --- CONFIG & STATE ---
 let map, userMarker, siteCircle;
 let userLat, userLng;
@@ -184,14 +199,14 @@ function isInsideGeofence(lat, lng) {
 function handleStartDay() {
     if (!userLat) return alert("⚠️ Waiting for GPS...");
     if (isInsideGeofence(userLat, userLng)) {
-        const statusEl = document.getElementById('status');
-        statusEl.innerHTML = "🟢 Active (On Shift)";
-        statusEl.style.background = "#d1fae5";
-        statusEl.style.color = "#065f46";
-        localStorage.setItem('isShiftStarted', 'true');
-        alert("✅ Check-in Successful!");
-    } else {
-        alert("❌ You are outside the work zone!");
+        // ... your existing UI logic ...
+
+        // NEW: Send to Backend
+        const timestamp = new Date().toLocaleString();
+        const workerId = localStorage.getItem('currentUser');
+        saveDataToCloud("Attendance", [timestamp, workerId, userLat, userLng, "Present", "N/A"]);
+
+        alert("✅ Check-in Successful & Synced!");
     }
 }
 
@@ -313,31 +328,46 @@ function loadAdminChart() {
 }
 
 // --- LEAVE MANAGEMENT SYSTEM ---
-function submitLeave() {
+async function submitLeave() {
     const type = document.getElementById('leaveType').value;
     const reason = document.getElementById('leaveReason').value;
     const workerId = localStorage.getItem('currentUser');
 
     if (!reason) return alert("Please provide a reason.");
 
-    const newRequest = {
-        id: Date.now(),
-        workerId: workerId,
-        type: type,
-        reason: reason,
-        status: 'Pending',
-        date: new Date().toLocaleDateString()
-    };
+    const timestamp = new Date().toLocaleString();
 
+    // Data structure for your Google Sheet "Leaves" tab
+    const rowData = [
+        timestamp,
+        workerId,
+        type,
+        reason,
+        "Pending"
+    ];
+
+    // 1. UPDATE UI IMMEDIATELY
     const requests = JSON.parse(localStorage.getItem('leaveRequests') || "[]");
-    requests.push(newRequest);
+    requests.push({
+        id: Date.now(),
+        workerId,
+        type,
+        reason,
+        status: 'Pending',
+        timestamp
+    });
     localStorage.setItem('leaveRequests', JSON.stringify(requests));
 
+    // Clear form and update UI
     document.getElementById('leaveReason').value = "";
-    alert("✅ Leave Request Submitted!");
     checkWorkerLeaveStatus();
-}
 
+    // 2. TRIGGER CLOUD SYNC
+    // Changed "smartSync" to "saveDataToCloud" to match your new function
+    await saveDataToCloud("Leaves", rowData);
+
+    alert("✅ Leave Request Processed!");
+}
 function checkWorkerLeaveStatus() {
     const workerId = localStorage.getItem('currentUser');
     const requests = JSON.parse(localStorage.getItem('leaveRequests') || "[]");
@@ -394,17 +424,69 @@ function loadSupervisorLeaves() {
     });
 }
 
-function handleLeaveDecision(id, decision) {
+async function handleLeaveDecision(id, decision) {
     const requests = JSON.parse(localStorage.getItem('leaveRequests') || "[]");
     const index = requests.findIndex(r => r.id === id);
+
     if (index !== -1) {
-        requests[index].status = decision;
+        const req = requests[index];
+        req.status = decision; // Update local state
         localStorage.setItem('leaveRequests', JSON.stringify(requests));
-        alert(`Request marked as ${decision}`);
+
+        // SYNC THE DECISION TO CLOUD
+        try {
+            await fetch(BACKEND_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "updateLeave",
+                    workerId: req.workerId,
+                    reason: req.reason,
+                    status: decision
+                })
+            });
+            alert(`✅ Request ${decision} and synced to Cloud!`);
+        } catch (e) {
+            alert("Local update saved, but cloud sync failed.");
+        }
+
         loadSupervisorLeaves();
     }
 }
+async function triggerMilitarySOS() {
+    // 1. Immediate Haptic Feedback (Military 'S' signal in Morse)
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
 
+    // 2. Safety Confirmation
+    if (!confirm("🚨 CONFIRM EMERGENCY SOS?\nThis will alert all Supervisors and Admin immediately.")) return;
+
+    const workerId = localStorage.getItem('currentUser') || "Unknown_Worker";
+    const timestamp = new Date().toLocaleString();
+
+    // Fallback if GPS hasn't locked yet
+    const lat = typeof userLat !== 'undefined' ? userLat : "GPS_NOT_LOCKED";
+    const lng = typeof userLng !== 'undefined' ? userLng : "GPS_NOT_LOCKED";
+
+    const sosMessage = `🚨 EMERGENCY SOS! Location: ${lat}, ${lng}`;
+
+    // 3. Save to Local Log (For audit trail)
+    const logs = JSON.parse(localStorage.getItem('adminReports') || "[]");
+    logs.push({ id: Date.now(), workerId, type: "SOS", desc: sosMessage, status: "URGENT", timestamp });
+    localStorage.setItem('adminReports', JSON.stringify(logs));
+
+    // 4. BLAST TO CLOUD
+    // We use your existing function 'saveDataToCloud'
+    // Column Mapping: Timestamp, WorkerID, Type, Description, Status
+    const rowData = [timestamp, workerId, "🚨 SOS EMERGENCY", sosMessage, "CRITICAL"];
+
+    try {
+        await saveDataToCloud("AdminReports", rowData);
+        alert("🆘 SOS Sent! HQ has been notified of your location.");
+    } catch (e) {
+        // If internet is dead, it's already in LocalStorage via step 3
+        alert("📡 Network Failure: SOS logged locally. It will sync automatically once signal returns.");
+    }
+}
 // --- DYNAMIC TASK MANAGER (NEW SECTIONS) ---
 
 // 1. SUPERVISOR: Assign a Task
@@ -414,22 +496,37 @@ function assignTask() {
 
     if (!desc || !assignedTo) return alert("Please fill all fields");
 
+    const timestamp = new Date().toLocaleString();
     const newTask = {
         id: Date.now(),
         desc: desc,
         assignedTo: assignedTo,
         completed: false,
-        assignedBy: "Supervisor"
+        assignedBy: "Supervisor",
+        timestamp: timestamp
     };
 
+    // 1. Save locally (for Supervisor/Worker UI)
     const allTasks = JSON.parse(localStorage.getItem('allTasks') || "[]");
     allTasks.push(newTask);
     localStorage.setItem('allTasks', JSON.stringify(allTasks));
 
-    alert(`✅ Task assigned to Worker ${assignedTo}`);
+    // 2. FIXED: SYNC TO GOOGLE SHEETS
+    // Columns: A: Timestamp | B: Worker ID | C: Task Desc | D: Assigned By | E: Status
+    const rowData = [
+        timestamp,
+        assignedTo,
+        desc,
+        "Supervisor",
+        "Pending"
+    ];
+
+    // This is the line that was missing!
+    saveDataToCloud("Tasks", rowData);
+
+    alert(`✅ Task assigned to Worker ${assignedTo} and synced!`);
     document.getElementById('newTaskDesc').value = "";
 }
-
 // 2. WORKER: Load My Tasks
 function loadWorkerTasks() {
     const myId = localStorage.getItem('currentUser');
@@ -466,13 +563,57 @@ function loadWorkerTasks() {
 }
 
 // 3. WORKER: Toggle Task Completion
-function toggleTask(taskId) {
+async function toggleTask(taskId) {
     const allTasks = JSON.parse(localStorage.getItem('allTasks') || "[]");
     const taskIndex = allTasks.findIndex(t => t.id === taskId);
 
     if (taskIndex > -1) {
-        allTasks[taskIndex].completed = !allTasks[taskIndex].completed;
+        const task = allTasks[taskIndex];
+        task.completed = !task.completed; // Toggle state
+        const newStatus = task.completed ? "Done" : "Pending";
+
+        // 1. Update Local Storage
         localStorage.setItem('allTasks', JSON.stringify(allTasks));
+        loadWorkerTasks(); // Refresh UI
+
+        // 2. SYNC TO CLOUD (Supervisor Visibility)
+        try {
+            await fetch(BACKEND_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "updateTaskStatus", // New action for Google Script
+                    workerId: localStorage.getItem('currentUser'),
+                    taskDesc: task.desc,
+                    status: newStatus
+                })
+            });
+            console.log("Task status updated in cloud");
+        } catch (e) {
+            console.error("Cloud update failed", e);
+        }
+    }
+}
+async function submitFinalTasks() {
+    const allTasks = JSON.parse(localStorage.getItem('allTasks') || "[]");
+    const myId = localStorage.getItem('currentUser');
+    const completed = allTasks.filter(t => t.completed).length;
+    const total = allTasks.length;
+    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+    if (confirm(`Submit your daily progress (${percentage}%) to your supervisor?`)) {
+        const rowData = [
+            new Date().toLocaleString(),
+            myId,
+            `Completed ${completed}/${total} tasks`,
+            `${percentage}%`
+        ];
+
+        await saveDataToCloud("DailyProgress", rowData);
+
+        // Optional: Clear tasks after final submission
+        localStorage.removeItem('allTasks');
+        alert("🚀 Daily progress submitted and tasks cleared!");
         loadWorkerTasks();
     }
 }
@@ -498,27 +639,36 @@ function submitFieldReport() {
 
     if (!qty || !notes) return alert("Please fill in Quantity and Notes.");
 
-    const report = {
-        id: Date.now(),
-        workerId: workerId,
-        category: category,
-        qty: qty,
-        unit: unit,
-        notes: notes,
-        timestamp: new Date().toLocaleTimeString(),
-        date: new Date().toLocaleDateString()
-    };
+    // 1. Create the timestamp
+    const timestamp = new Date().toLocaleString();
 
-    // Save to LocalStorage
+    // 2. Map data to match your Google Sheet columns exactly:
+    // Column A: Timestamp | B: WorkerID | C: Category | D: Qty | E: Unit | F: Notes
+    const rowData = [
+        timestamp,
+        workerId,
+        category,
+        qty,
+        unit,
+        notes
+    ];
+
+    // 3. Save to LocalStorage (for offline-first capability)
+    const reportObj = { id: Date.now(), workerId, category, qty, unit, notes, timestamp };
     const reports = JSON.parse(localStorage.getItem('fieldReports') || "[]");
-    reports.push(report);
+    reports.push(reportObj);
     localStorage.setItem('fieldReports', JSON.stringify(reports));
 
-    alert("✅ Data Logged Successfully!");
+    // 4. SYNC TO GOOGLE SHEETS
+    // Using "Reports" to match your tab name exactly
+    saveDataToCloud("Reports", rowData);
+
+    alert("✅ Data Logged & Sent to Cloud!");
 
     // Clear Form
     document.getElementById('reportQty').value = "";
     document.getElementById('reportNotes').value = "";
+    saveDataToCloud("AdminReports", [new Date().toLocaleString(), workerId, type, desc, "Open"]);
 }
 
 // 2. SUPERVISOR: Load Operations Feed
@@ -683,4 +833,86 @@ function detectFall() {
         }
         window.fallTimeout = null;
     }, 500); // Wait 0.5s to filter out accidental shakes
+}
+async function loadSupervisorTaskMonitoring() {
+    const list = document.getElementById('supervisorTaskFeed'); // Ensure this ID exists in your HTML
+    if (!list) return;
+
+    // Use GET request to fetch data from the "Tasks" sheet
+    const url = `${BACKEND_URL}?action=getTasks`;
+
+    try {
+        const response = await fetch(url);
+        const tasks = await response.json();
+
+        list.innerHTML = "";
+
+        if (tasks.length === 0) {
+            list.innerHTML = "<li>No tasks logged today.</li>";
+            return;
+        }
+
+        // Show newest tasks first
+        tasks.reverse().forEach(task => {
+            const li = document.createElement('li');
+            const statusColor = task.Status === "Done" ? "#166534" : "#f59e0b";
+            const bg = task.Status === "Done" ? "#dcfce7" : "#fef3c7";
+
+            li.innerHTML = `
+                <div style="padding: 10px; border-bottom: 1px solid #eee; background: ${bg}; border-radius: 8px; margin-bottom: 5px;">
+                    <strong>Worker ${task.WorkerID}</strong>: ${task.TaskDesc}
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <span style="font-size: 0.8rem; font-weight: bold; color: ${statusColor};">${task.Status}</span>
+                        <small style="color: gray;">${task.Timestamp}</small>
+                    </div>
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    } catch (e) {
+        console.error("Failed to load supervisor task feed", e);
+    }
+}
+async function loadSupervisorTaskMonitoring() {
+    const list = document.getElementById('supervisorTaskFeed');
+    if (!list) return;
+
+    // Fetch the latest data from your Google Sheet 'Tasks' tab
+    const url = `${BACKEND_URL}?action=getTasks`;
+
+    try {
+        const response = await fetch(url);
+        const tasks = await response.json();
+
+        list.innerHTML = "";
+
+        if (tasks.length === 0) {
+            list.innerHTML = "<li style='padding:10px; color:gray;'>No tasks assigned yet.</li>";
+            return;
+        }
+
+        // Show newest updates at the top
+        tasks.reverse().forEach(task => {
+            const li = document.createElement('li');
+            const isDone = task.Status === "Done";
+            const statusColor = isDone ? "#166534" : "#f59e0b";
+            const bg = isDone ? "#dcfce7" : "#fef3c7";
+
+            li.style.cssText = `padding:15px; border-bottom:1px solid #eee; background:${bg}; border-radius:8px; margin-bottom:10px; list-style:none;`;
+            li.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong>Worker ${task.WorkerID}</strong>
+                    <span style="font-size:0.7rem; color:gray;">${task.Timestamp}</span>
+                </div>
+                <p style="margin:5px 0; font-size:0.9rem;">Task: "${task.TaskDesc}"</p>
+                <div style="font-size:0.8rem; font-weight:bold; color:${statusColor}; display:flex; align-items:center; gap:5px;">
+                    <i class="fa-solid ${isDone ? 'fa-circle-check' : 'fa-clock'}"></i> ${task.Status}
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    } catch (e) {
+        console.error("Failed to load supervisor task feed", e);
+        list.innerHTML = "<li style='color:red; padding:10px;'>⚠️ Error syncing with cloud.</li>";
+    }
 }

@@ -40,6 +40,11 @@
     <section id="dashboardSection" class="hidden">
         <nav class="top-nav">
             <div class="nav-brand"><i class="fa-solid fa-helmet-safety"></i> EcoSahayak</div>
+            <div class="emergency-zone">
+                <button id="sosBtn" onclick="triggerMilitarySOS()" class="btn-sos">
+                    <i class="fa-solid fa-circle-exclamation"></i> SOS
+                </button>
+            </div>
             <button onclick="handleLogout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
         </nav>
 
@@ -95,6 +100,10 @@
                             ✅ No tasks assigned yet.
                         </p>
                     </div>
+                    <button id="submitTasksBtn" onclick="submitFinalTasks()" class="btn-primary"
+                        style="margin-top:10px; width:100%;">
+                        Submit Daily Progress
+                    </button>
                 </div>
 
                 <div class="card widget-card activity-card">
@@ -219,6 +228,16 @@
                 </ul>
                 <button onclick="loadOpsFeed()" class="btn-secondary full-width" style="margin-top:10px;">
                     <i class="fa-solid fa-rotate"></i> Refresh Feed
+                </button>
+            </div>
+            <div class="card">
+                <h3><i class="fa-solid fa-list-check"></i> Live Task Completion Feed</h3>
+                <ul id="supervisorTaskFeed" class="feed-list">
+                    <li style="text-align:center; color:#999; padding:10px;">Loading live updates...</li>
+                </ul>
+                <button onclick="loadSupervisorTaskMonitoring()" class="btn-secondary"
+                    style="width:100%; margin-top:10px;">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh Task Status
                 </button>
             </div>
 
