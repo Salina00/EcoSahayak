@@ -333,41 +333,8 @@
             window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
         }
     </script>
-    <button id="testDb">Test Firestore</button>
 
 </body>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // 🔴 PASTE your firebaseConfig here
-    const firebaseConfig = {
-        apiKey: "AIzaSyA_IzOLEHx2Rffnk4H7Wz3XKP7KBqPfi88",
-        authDomain: "ecosahayak-e69da.firebaseapp.com",
-        projectId: "ecosahayak-e69da",
-        storageBucket: "ecosahayak-e69da.firebasestorage.app",
-        messagingSenderId: "918953135781",
-        appId: "1:918953135781:web:2af0a6ec72c01bbe9e874c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    console.log("Firestore connected");
-    document.getElementById("testDb").onclick = async () => {
-        try {
-            await addDoc(collection(db, "test"), {
-                message: "Firestore is working",
-                time: new Date()
-            });
-            alert("Data written successfully");
-        } catch (err) {
-            console.error(err);
-            alert("Error writing to Firestore");
-        }
-    };
-
-</script>
 
 
 </html>
