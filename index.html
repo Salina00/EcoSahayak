@@ -17,6 +17,7 @@
 
 <body>
 
+    <!-- LOGIN SECTION - Unchanged -->
     <section id="loginSection" class="view-section">
         <div class="login-card">
             <div class="brand-logo"><i class="fa-solid fa-leaf"></i> EcoSahayak</div>
@@ -37,6 +38,9 @@
         </div>
     </section>
 
+    <!-- ========================================
+         WORKER DASHBOARD - MAIN VIEW (Refactored)
+         ======================================== -->
     <section id="dashboardSection" class="hidden">
         <nav class="top-nav">
             <div class="nav-brand"><i class="fa-solid fa-helmet-safety"></i> EcoSahayak</div>
@@ -49,6 +53,7 @@
         </nav>
 
         <main class="main-grid">
+            <!-- Hero Section: Check-in and Status - KEPT AS IS -->
             <div class="card hero-section">
                 <div class="status-badge" id="status">🔴 Inactive</div>
                 <h1 id="welcomeText">Good Morning</h1>
@@ -58,6 +63,7 @@
                 </button>
             </div>
 
+            <!-- GPS Location Map - KEPT AS IS -->
             <div class="card map-card">
                 <h3><i class="fa-solid fa-map-location-dot"></i> Your Location</h3>
                 <div id="map"></div>
@@ -65,117 +71,341 @@
                 <div class="map-info map-warning">⚠ You must be inside the Green Circle to check in.</div>
             </div>
 
-            <div class="right-stack">
-
-                <div class="card widget-card">
-                    <h3><i class="fa-solid fa-camera"></i> Verification</h3>
-                    <div class="camera-box">
-                        <video id="videoFeed" autoplay playsinline></video>
-                        <canvas id="canvas" style="display:none;"></canvas>
-                        <img id="photoPreview" src="" alt="Selfie" style="display:none;">
-                    </div>
-                    <div class="cam-controls">
-                        <button id="openCameraBtn" class="btn-secondary">
-                            <i class="fa-solid fa-video"></i> Open
-                        </button>
-                        <button id="captureBtn" class="btn-primary hidden">
-                            <i class="fa-solid fa-camera"></i> Snap
-                        </button>
-                        <button id="retakeBtn" class="btn-secondary hidden">
-                            <i class="fa-solid fa-rotate-left"></i> Retake
-                        </button>
-                    </div>
+            <!-- Camera Verification - KEPT AS IS -->
+            <div class="card widget-card">
+                <h3><i class="fa-solid fa-camera"></i> Verification</h3>
+                <div class="camera-box">
+                    <video id="videoFeed" autoplay playsinline></video>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                    <img id="photoPreview" src="" alt="Selfie" style="display:none;">
                 </div>
-
-                <div class="card widget-card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-clipboard-list"></i> Today's Tasks</h3>
-                        <span class="percent-text" id="taskPercent">0%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" id="progressBar"></div>
-                    </div>
-                    <div class="task-list" id="workerTaskList">
-                        <p style="color:#999; text-align:center; font-size:0.9rem; padding:10px;">
-                            ✅ No tasks assigned yet.
-                        </p>
-                    </div>
-                    <button id="submitTasksBtn" onclick="submitFinalTasks()" class="btn-primary"
-                        style="margin-top:10px; width:100%;">
-                        Submit Daily Progress
+                <div class="cam-controls">
+                    <button id="openCameraBtn" class="btn-secondary">
+                        <i class="fa-solid fa-video"></i> Open
+                    </button>
+                    <button id="captureBtn" class="btn-primary hidden">
+                        <i class="fa-solid fa-camera"></i> Snap
+                    </button>
+                    <button id="retakeBtn" class="btn-secondary hidden">
+                        <i class="fa-solid fa-rotate-left"></i> Retake
                     </button>
                 </div>
+            </div>
 
-                <div class="card widget-card activity-card">
-                    <div class="card-header">
-                        <div class="icon-square green-square">
+            <!-- ========================================
+                 NEW: Quick Action Buttons Section
+                 These replace the expanded cards with navigation buttons
+                 ======================================== -->
+            <div class="card quick-actions-card">
+                <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+                <div class="quick-actions-grid">
+                    
+                    <!-- Button 1: Tasks -->
+                    <button class="action-button" onclick="openTasksPage()">
+                        <div class="action-icon green-square">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </div>
+                        <div class="action-text">
+                            <h4>My Tasks</h4>
+                            <p>View & complete assignments</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right action-arrow"></i>
+                    </button>
+
+                    <!-- Button 2: Field Activity -->
+                    <button class="action-button" onclick="openFieldActivityPage()">
+                        <div class="action-icon green-square">
                             <i class="fa-solid fa-clipboard-check"></i>
                         </div>
-                        <h3>Log Field Activity</h3>
-                    </div>
-                    <div style="margin-top:15px;">
-                        <select id="reportCategory" class="modern-input">
-                            <option value="Waste Collection">🗑 Waste Collection</option>
-                            <option value="Tree Plantation">🌱 Tree Plantation</option>
-                            <option value="Awareness Drive">📢 Awareness Drive</option>
-                            <option value="Site Issue">⚠ Site Issue</option>
-                        </select>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-                            <input type="number" id="reportQty" placeholder="📊 Qty (kg/count)" class="modern-input">
-                            <input type="text" id="reportUnit" placeholder="📦 Unit (kg, bags)" class="modern-input">
+                        <div class="action-text">
+                            <h4>Log Field Activity</h4>
+                            <p>Record waste, trees, awareness</p>
                         </div>
-                        <textarea id="reportNotes" placeholder="📝 Details (e.g., Segregated plastic from Zone A)"
-                            class="modern-input" rows="2" style="margin-top:10px;"></textarea>
-                        <button onclick="submitFieldReport()" class="btn-primary full-width btn-green">
-                            <i class="fa-solid fa-paper-plane"></i> Submit Log
-                        </button>
-                    </div>
-                </div>
+                        <i class="fa-solid fa-chevron-right action-arrow"></i>
+                    </button>
 
-                <div class="card widget-card leave-card">
-                    <h3><i class="fa-solid fa-calendar-xmark"></i> Apply for Leave</h3>
-                    <div id="workerLeaveStatus"
-                        style="margin-bottom:10px; font-size:0.9rem; padding:8px; border-radius:4px; display:none;">
-                    </div>
-                    <div id="leaveFormBlock">
-                        <select id="leaveType" class="modern-input">
-                            <option value="Sick Leave">🤒 Sick Leave</option>
-                            <option value="Casual Leave">🏠 Casual Leave</option>
-                            <option value="Emergency">🚨 Emergency</option>
-                        </select>
-                        <textarea id="leaveReason" placeholder="✍ Reason (e.g., Fever)" class="modern-input" rows="2"
-                            style="margin-top:10px;"></textarea>
-                        <button onclick="submitLeave()" class="btn-primary full-width btn-amber">
-                            <i class="fa-solid fa-paper-plane"></i> Submit Request
-                        </button>
-                    </div>
-                </div>
+                    <!-- Button 3: Leave Application -->
+                    <button class="action-button" onclick="openLeavePage()">
+                        <div class="action-icon" style="background: var(--accent-light); color: var(--accent);">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                        </div>
+                        <div class="action-text">
+                            <h4>Apply for Leave</h4>
+                            <p>Submit leave requests</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right action-arrow"></i>
+                    </button>
 
-                <div class="card widget-card sos-card">
-                    <div class="card-header">
-                        <div class="icon-square red-square">
+                    <!-- Button 4: Issue Reporting -->
+                    <button class="action-button" onclick="openIssuePage()">
+                        <div class="action-icon red-square">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
-                        <h3>Report Issue / SOS</h3>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <select id="issueType" class="modern-input">
-                            <option value="Safety Hazard">⚠ Safety Hazard</option>
-                            <option value="Equipment Failure">🛠 Equipment Failure</option>
-                            <option value="App Issue">📱 App/Tech Issue</option>
-                        </select>
-                        <textarea id="issueDesc" placeholder="📝 Describe the problem..." class="modern-input" rows="2"
-                            style="margin-top:10px;"></textarea>
-                        <button onclick="submitAdminReport()" class="btn-primary full-width btn-red">
-                            <i class="fa-solid fa-exclamation-circle"></i> Send to Admin
-                        </button>
-                    </div>
-                </div>
+                        <div class="action-text">
+                            <h4>Report Issue</h4>
+                            <p>Safety hazards & problems</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right action-arrow"></i>
+                    </button>
 
+                </div>
+            </div>
+
+        </main>
+    </section>
+
+    <!-- ========================================
+         NEW PAGE: TASKS PAGE
+         Dedicated page for viewing and managing tasks
+         ======================================== -->
+    <section id="tasksPage" class="hidden sub-page">
+        <nav class="top-nav">
+            <button onclick="backToDashboard()" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="nav-brand"><i class="fa-solid fa-clipboard-list"></i> My Tasks</div>
+            <button onclick="handleLogout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </nav>
+
+        <main class="sub-page-content">
+            <div class="card widget-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-clipboard-list"></i> Today's Tasks</h3>
+                    <span class="percent-text" id="taskPercent">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <div class="task-list" id="workerTaskList">
+                    <p style="color:#999; text-align:center; font-size:0.9rem; padding:10px;">
+                        ✅ No tasks assigned yet.
+                    </p>
+                </div>
+                <button id="submitTasksBtn" onclick="submitFinalTasks()" class="btn-primary"
+                    style="margin-top:10px; width:100%;">
+                    Submit Daily Progress
+                </button>
             </div>
         </main>
     </section>
 
+    <!-- ========================================
+         NEW PAGE: FIELD ACTIVITY PAGE
+         Dedicated page for logging field work
+         ======================================== -->
+    <section id="fieldActivityPage" class="hidden sub-page">
+        <nav class="top-nav">
+            <button onclick="backToDashboard()" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="nav-brand"><i class="fa-solid fa-clipboard-check"></i> Field Activity</div>
+            <button onclick="handleLogout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </nav>
+
+        <main class="sub-page-content">
+            <div class="card widget-card activity-card">
+                <div class="card-header">
+                    <div class="icon-square green-square">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3>Log Field Activity</h3>
+                </div>
+                <div style="margin-top:15px;">
+                    <select id="reportCategory" class="modern-input">
+                        <option value="Waste Collection">🗑 Waste Collection</option>
+                        <option value="Tree Plantation">🌱 Tree Plantation</option>
+                        <option value="Awareness Drive">📢 Awareness Drive</option>
+                        <option value="Site Issue">⚠ Site Issue</option>
+                    </select>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+                        <input type="number" id="reportQty" placeholder="📊 Qty (kg/count)" class="modern-input">
+                        <input type="text" id="reportUnit" placeholder="📦 Unit (kg, bags)" class="modern-input">
+                    </div>
+                    <textarea id="reportNotes" placeholder="📝 Details (e.g., Segregated plastic from Zone A)"
+                        class="modern-input" rows="4" style="margin-top:10px;"></textarea>
+                    <button onclick="submitFieldReport()" class="btn-primary full-width btn-green">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Log
+                    </button>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- ========================================
+         NEW PAGE: LEAVE APPLICATION PAGE
+         Dedicated page for applying leave
+         ======================================== -->
+    <section id="leavePage" class="hidden sub-page">
+        <nav class="top-nav">
+            <button onclick="backToDashboard()" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="nav-brand"><i class="fa-solid fa-calendar-xmark"></i> Apply Leave</div>
+            <button onclick="handleLogout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </nav>
+
+        <main class="sub-page-content">
+            <div class="card widget-card leave-card" style="background-color: white; border: 1px solid #e0e0e0; padding: 20px;">
+
+                <div id="leaveFormBlock">
+                    <!-- Leave application form -->
+                    <h4 style="margin-bottom: 10px; color: #333; font-weight: 600;">Leave Type</h4>
+
+                    <!-- Radio buttons for leave type selection -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 10px; padding: 12px; 
+                                border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;
+                                cursor: pointer; transition: all 0.2s;">
+                                <input type="radio" name="leaveTypeRadio" value="Sick Leave" checked 
+                                    style="width: 18px; height: 18px; cursor: pointer;"
+                                    onchange="document.getElementById('leaveType').value = this.value">
+                                <span style="font-size: 14px;">🤒 Sick Leave</span>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; padding: 12px; 
+                                border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;
+                                cursor: pointer; transition: all 0.2s;">
+                                <input type="radio" name="leaveTypeRadio" value="Casual Leave" 
+                                    style="width: 18px; height: 18px; cursor: pointer;"
+                                    onchange="document.getElementById('leaveType').value = this.value">
+                                <span style="font-size: 14px;">🏠 Casual Leave</span>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; padding: 12px; 
+                                border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;
+                                cursor: pointer; transition: all 0.2s;">
+                                <input type="radio" name="leaveTypeRadio" value="Emergency" 
+                                    style="width: 18px; height: 18px; cursor: pointer;"
+                                    onchange="document.getElementById('leaveType').value = this.value">
+                                <span style="font-size: 14px;">🚨 Emergency</span>
+                            </label>
+                        </div>
+
+                        <select id="leaveType" class="modern-input" style="display: none;">
+                            <option value="Sick Leave">🤒 Sick Leave</option>
+                            <option value="Casual Leave">🏠 Casual Leave</option>
+                            <option value="Emergency">🚨 Emergency</option>
+                        </select>
+
+                    </div>
+
+                    <h4 style="margin-bottom: 10px; color: #333; font-weight: 600;">Reason for Leave</h4>
+                
+                    <textarea id="leaveReason" placeholder="✍ Reason (e.g., Fever)" class="modern-input" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 20px; background-color: #f9f9f9;"></textarea>
+
+                    <!-- Buttons side by side -->
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="cancelLeave()" 
+                                style="flex: 1; padding: 12px; background-color: #f5f5f5; color: #333; 
+                                    border: 1px solid #ddd; border-radius: 6px; cursor: pointer;
+                                    font-weight: 500;">
+                            <i class="fa-solid fa-xmark"></i> Cancel
+                        </button>
+                        <button onclick="submitLeave()" 
+                                style="flex: 1; padding: 12px; background-color: #ff9800; color: white; 
+                                    border: none; border-radius: 6px; cursor: pointer;
+                                    font-weight: 500;">
+                            <i class="fa-solid fa-paper-plane"></i> Apply Leave
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card widget-card leave-card" style="background-color: white; border: 1px solid #e0e0e0; padding: 20px; margin-top: 20px;">
+                <h4 style="margin-bottom: 10px; color: #333; font-weight: 600;"> Leave Request History</h4>
+
+                <!-- Leave status display (shows if leave is pending/approved) -->
+                <div id="workerLeaveStatus"
+                    style="font-size: 0.9rem; padding: 8px; border-radius: 4px; display: none;">
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- ========================================
+         NEW PAGE: ISSUE REPORTING PAGE
+         Dedicated page for reporting problems
+         ======================================== -->
+    <section id="issuePage" class="hidden sub-page">
+        <nav class="top-nav">
+            <button onclick="backToDashboard()" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="nav-brand"><i class="fa-solid fa-triangle-exclamation"></i> Report Issue</div>
+            <button onclick="handleLogout()" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </nav>
+
+        <main class="sub-page-content">
+            <div class="card widget-card leave-card" style="background-color: white; border: 1px solid #e0e0e0; padding: 20px;">
+                <div id = "issueFormBlock" >
+                <!-- Leave application form -->
+                    <h4 style="margin-bottom: 10px; color: #333; font-weight: 600;">Issue Type</h4>
+
+                    <!-- Radio buttons for leave type selection -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 10px; padding: 12px; 
+                                border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;
+                                cursor: pointer; transition: all 0.2s;">
+                                <input type="radio" name="issueTypeRadio" value="Safety Hazard" checked 
+                                    style="width: 18px; height: 18px; cursor: pointer;"
+                                    onchange="document.getElementById('issueType').value = this.value">
+                                <span style="font-size: 14px;">⚠ Safety Hazard</span>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; padding: 12px; 
+                                border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;
+                                cursor: pointer; transition: all 0.2s;">
+                                <input type="radio" name="issueTypeRadio" value="Equipment Failure" 
+                                    style="width: 18px; height: 18px; cursor: pointer;"
+                                    onchange="document.getElementById('issueType').value = this.value">
+                                <span style="font-size: 14px;">🛠 Equipment Failure</span>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; padding: 12px; 
+                                border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;
+                                cursor: pointer; transition: all 0.2s;">
+                                <input type="radio" name="issueTypeRadio" value="App/Tech Issue" 
+                                    style="width: 18px; height: 18px; cursor: pointer;"
+                                    onchange="document.getElementById('issueType').value = this.value">
+                                <span style="font-size: 14px;">📱 App/Tech Issue</span>
+                            </label>
+                        </div>
+
+                        <select id="issueType" class="modern-input" style="display: none;">
+                            <option value="Safety Hazard">⚠ Safety Hazard</option>
+                            <option value="Equipment Failure">🛠 Equipment Failure</option>
+                            <option value="App Issue">📱 App/Tech Issue</option>
+                        </select>
+                    </div>
+
+                    <h4 style="margin-bottom: 10px; color: #333; font-weight: 600;">Reason for Leave</h4>
+                
+                    <textarea id="issueDesc" placeholder="📝 Describe the problem..." class="modern-input" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 20px; background-color: #f9f9f9;"></textarea>
+
+                    <!-- Buttons side by side -->
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="cancelIssue()" 
+                                style="flex: 1; padding: 12px; background-color: #f5f5f5; color: #333; 
+                                    border: 1px solid #ddd; border-radius: 6px; cursor: pointer;
+                                    font-weight: 500;">
+                            <i class="fa-solid fa-xmark"></i> Cancel
+                        </button>
+                        <button onclick="submitAdminReport()" 
+                                style="flex: 1; padding: 12px; background-color: red; color: white; 
+                                    border: none; border-radius: 6px; cursor: pointer;
+                                    font-weight: 500;">
+                            <i class="fa-solid fa-exclamation-circle"></i> Send to Admin
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- ========================================
+         SUPERVISOR DASHBOARD - Unchanged
+         ======================================== -->
     <section id="supervisorDashboardSection" class="hidden">
         <nav class="top-nav supervisor-nav">
             <div class="nav-brand"><i class="fa-solid fa-users-viewfinder"></i> Supervisor</div>
@@ -255,6 +485,9 @@
         </main>
     </section>
 
+    <!-- ========================================
+         ADMIN DASHBOARD - Unchanged
+         ======================================== -->
     <section id="adminDashboardSection" class="hidden">
         <nav class="top-nav admin-nav">
             <div class="nav-brand"><i class="fa-solid fa-user-shield"></i> Admin Panel</div>
@@ -297,6 +530,9 @@
         </main>
     </section>
 
+    <!-- ========================================
+         REGISTRATION & PASSWORD RESET - Unchanged
+         ======================================== -->
     <section id="registerSection" class="view-section hidden">
         <div class="login-card">
             <div class="brand-logo"><i class="fa-solid fa-user-plus"></i></div>
@@ -329,12 +565,78 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="app.js"></script>
     <script>
+        // ========================================
+        // NAVIGATION FUNCTIONS FOR NEW PAGES
+        // ========================================
+
+        /**
+         * Opens the Tasks page and hides the main dashboard
+         */
+        function openTasksPage() {
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('tasksPage').classList.remove('hidden');
+        }
+
+        /**
+         * Opens the Field Activity logging page
+         */
+        function openFieldActivityPage() {
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('fieldActivityPage').classList.remove('hidden');
+        }
+
+        /**
+         * Opens the Leave Application page
+         */
+        function openLeavePage() {
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('leavePage').classList.remove('hidden');
+        }
+
+        /**
+         * Opens the Issue Reporting page
+         */
+        function openIssuePage() {
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('issuePage').classList.remove('hidden');
+        }
+
+        /**
+         * Returns to main dashboard from any sub-page
+         * Hides all sub-pages and shows the main dashboard
+         */
+        function backToDashboard() {
+            // Hide all sub-pages
+            document.getElementById('tasksPage').classList.add('hidden');
+            document.getElementById('fieldActivityPage').classList.add('hidden');
+            document.getElementById('leavePage').classList.add('hidden');
+            document.getElementById('issuePage').classList.add('hidden');
+            
+            // Show main dashboard
+            document.getElementById('dashboardSection').classList.remove('hidden');
+        }
+
+        function cancelLeave() {
+            document.getElementById('leaveReason').value = '';
+            // Reset radio buttons to first option
+            document.querySelector('input[name="leaveTypeRadio"][value="Sick Leave"]').checked = true;
+            document.getElementById('leaveType').value = "Sick Leave"; // Reset to first option
+        }
+
+        function cancelIssue() {
+            document.getElementById('issueDesc').value = '';
+            // Reset radio buttons to first option
+            document.querySelector('input[name="issueTypeRadio"][value="Safety Hazard"]').checked = true;
+            document.getElementById('issueType').value = "Safety Hazard"; // Reset to first option
+        }
+
+
+        // Service Worker Registration (unchanged)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
         }
     </script>
 
 </body>
-
 
 </html>

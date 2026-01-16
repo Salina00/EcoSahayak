@@ -357,6 +357,31 @@ body {
     font-size: 1.6rem;
 }
 
+/* ========================================
+   NEW: BACK BUTTON FOR SUB-PAGES
+   ======================================== */
+.back-btn {
+    background: var(--primary-light);
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn:hover {
+    background: var(--primary);
+    transform: translateX(-5px) scale(1.1);
+    box-shadow: var(--shadow);
+}
+
 .logout-btn {
     background: var(--danger-light);
     border: none;
@@ -584,6 +609,117 @@ body {
     margin-top: 15px;
 }
 
+/* ========================================
+   NEW: QUICK ACTIONS CARD AND BUTTONS
+   These replace the old expanded cards
+   ======================================== */
+
+/* Quick Actions Card Container */
+.quick-actions-card {
+    border-left: 5px solid var(--primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+/* Grid layout for action buttons (2 columns) */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Individual Action Button */
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.action-button:hover {
+    transform: translateX(8px);
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, #ffffff 0%, #dcfce7 100%);
+}
+
+.action-button:active {
+    transform: translateX(8px) scale(0.98);
+}
+
+/* Icon inside action button */
+.action-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover .action-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Text content inside action button */
+.action-text {
+    flex: 1;
+}
+
+.action-text h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.action-text p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* Arrow icon on the right side */
+.action-arrow {
+    font-size: 1.2rem;
+    color: #9ca3af;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover .action-arrow {
+    color: var(--primary);
+    transform: translateX(5px);
+}
+
+/* ========================================
+   NEW: SUB-PAGE LAYOUT STYLES
+   Styling for the dedicated pages (Tasks, Field Activity, etc.)
+   ======================================== */
+
+/* Sub-page container */
+.sub-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+/* Content area for sub-pages */
+.sub-page-content {
+    padding: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
 /* CARD HEADER */
 .card-header {
     display: flex;
@@ -728,7 +864,7 @@ body {
     border-left-color: var(--primary);
 }
 
-/* RIGHT STACK */
+/* RIGHT STACK (for supervisor/admin - unchanged) */
 .right-stack {
     display: flex;
     flex-direction: column;
@@ -845,6 +981,19 @@ body {
     .card h3 {
         font-size: 1.15rem;
     }
+
+    /* Make action buttons stack better on mobile */
+    .action-button {
+        padding: 15px;
+    }
+
+    .action-text h4 {
+        font-size: 1rem;
+    }
+
+    .action-text p {
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -868,5 +1017,20 @@ body {
         width: 45px;
         height: 45px;
         font-size: 1.3rem;
+    }
+
+    /* Adjust action buttons for small screens */
+    .action-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+
+    .action-text h4 {
+        font-size: 0.95rem;
+    }
+
+    .action-text p {
+        font-size: 0.75rem;
     }
 }
