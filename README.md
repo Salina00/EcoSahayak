@@ -5,7 +5,7 @@
 **EcoSahayak** is a serverless, offline-first Progressive Web App (PWA) designed to eliminate "ghost workers" and streamline attendance tracking for remote construction sites. It combines GPS geofencing, selfie verification, and real-time cloud syncing without requiring expensive hardware.
 
 ---
-
+#we are doing a demo
 ### 🚩 The Problem
 Construction and remote industrial sites face three critical challenges:
 1.  **Attendance Fraud:** "Ghost workers" who mark attendance without being on-site.
